@@ -23,6 +23,7 @@ export interface ITenant extends Document {
     bankName: string;
     accountNo: string;
     accountName: string;
+    customQrUrl?: string;
   };
   receiptFooterNote: string;
   subscription: ITenantSubscription;
@@ -49,6 +50,7 @@ const TenantSchema = new Schema<ITenant>(
       bankName: { type: String, default: 'MBBank (Quân Đội)' },
       accountNo: { type: String, default: '0988888888' },
       accountName: { type: String, default: 'NGUYEN THI HOA' },
+      customQrUrl: { type: String, default: '' },
     },
     receiptFooterNote: { type: String, default: 'Cảm ơn Quý khách & Hẹn gặp lại!' },
     subscription: {

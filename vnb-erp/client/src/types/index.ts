@@ -83,6 +83,7 @@ export interface TenantConfig {
     bankName: string;
     accountNo: string;
     accountName: string;
+    customQrUrl?: string;
   };
   receiptFooterNote: string;
   subscription?: TenantSubscription;

@@ -91,7 +91,7 @@ router.post('/orders', async (req: Request, res: Response) => {
 
     // Generate VietQR if needed
     const tenant = memoryStore.tenant;
-    const vietqrUrl = generateVietQRUrl({
+    const vietqrUrl = tenant.vietqrConfig?.customQrUrl || generateVietQRUrl({
       bankId: tenant.vietqrConfig.bankId,
       accountNo: tenant.vietqrConfig.accountNo,
       accountName: tenant.vietqrConfig.accountName,

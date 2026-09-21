@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Settings,
   Store,
@@ -9,6 +9,9 @@ import {
   ToggleRight,
   Shield,
   Sparkles,
+  Upload,
+  Trash2,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useModuleStore } from '../../store/moduleStore';
 
@@ -25,7 +28,10 @@ export const SettingsScreen: React.FC = () => {
   const [bankName, setBankName] = useState('MBBank (Quân Đội)');
   const [accountNo, setAccountNo] = useState('');
   const [accountName, setAccountName] = useState('');
+  const [customQrUrl, setCustomQrUrl] = useState('');
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (tenant) {
@@ -37,8 +43,40 @@ export const SettingsScreen: React.FC = () => {
       setBankName(tenant.vietqrConfig?.bankName || 'MBBank');
       setAccountNo(tenant.vietqrConfig?.accountNo || '');
       setAccountName(tenant.vietqrConfig?.accountName || '');
+      setCustomQrUrl(tenant.vietqrConfig?.customQrUrl || '');
     }
   }, [tenant]);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Vui lòng chọn đúng định dạng hình ảnh (.png, .jpg, .jpeg, .webp)');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Kích thước ảnh tối đa là 5MB. Vui lòng chọn ảnh nhỏ hơn.');
+      return;
+    }
+
+    setUploadError('');
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      setCustomQrUrl(result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setCustomQrUrl('');
+    setUploadError('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +90,7 @@ export const SettingsScreen: React.FC = () => {
         bankName,
         accountNo,
         accountName,
+        customQrUrl,
       },
     });
     setSavedSuccess(true);
@@ -279,8 +318,83 @@ export const SettingsScreen: React.FC = () => {
             {/* VietQR Bank Info */}
             <h3 className="text-sm font-bold text-white uppercase tracking-wider pt-3 pb-2 border-b border-white/10 flex items-center gap-2 font-mono mt-2">
               <QrCode className="w-4 h-4 text-emerald-400" />
-              <span>Tài Khoản Nhận Tiền VietQR</span>
+              <span>Tài Khoản Nhận Tiền & Mã QR</span>
             </h3>
+
+            {/* Custom QR Image Upload Section */}
+            <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col gap-2.5">
+              <div className="flex items-center justify-between">
+                <label className="text-white/80 font-semibold text-xs flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5 text-[#FF5500]" />
+                  <span>Ảnh Mã QR Thanh Toán (Tùy chọn)</span>
+                </label>
+                {customQrUrl && (
+                  <span className="text-[10px] text-emerald-400 font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    Đã tải ảnh lên
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-white/50 leading-relaxed">
+                Tải lên ảnh mã QR nhận tiền của bạn (VietQR, MoMo, ZaloPay, v.v.). Khi thanh toán qua QR ở POS, mã này sẽ được hiển thị cho khách quét.
+              </p>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+
+              {customQrUrl ? (
+                <div className="flex items-center gap-3 pt-1">
+                  <div className="w-28 h-28 rounded-xl bg-white p-1.5 border border-white/20 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                    <img
+                      src={customQrUrl}
+                      alt="Ảnh QR tài khoản"
+                      className="w-full h-full object-contain rounded-lg"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <Upload className="w-3.5 h-3.5 text-[#FF5500]" />
+                      <span>Đổi ảnh QR khác</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="px-3 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 text-xs font-medium flex items-center gap-1.5 transition-colors border border-rose-500/20 cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Xóa ảnh QR</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full py-4 border-2 border-dashed border-white/20 hover:border-[#FF5500]/60 rounded-xl bg-white/[0.02] hover:bg-[#FF5500]/5 flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all group"
+                >
+                  <div className="w-8 h-8 rounded-full bg-white/5 group-hover:bg-[#FF5500]/20 flex items-center justify-center text-white/60 group-hover:text-[#FF5500] transition-colors">
+                    <Upload className="w-4 h-4" />
+                  </div>
+                  <span className="text-xs text-white/80 font-medium group-hover:text-white">
+                    Nhấp để tải lên ảnh mã QR
+                  </span>
+                  <span className="text-[10px] text-white/40">
+                    PNG, JPG, WEBP (tối đa 5MB)
+                  </span>
+                </div>
+              )}
+
+              {uploadError && (
+                <p className="text-[11px] text-rose-400 font-medium">{uploadError}</p>
+              )}
+            </div>
 
             <div className="flex flex-col gap-1">
               <label className="text-white/70 font-semibold">Tên ngân hàng</label>

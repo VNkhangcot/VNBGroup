@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { QrCode, CheckCircle2, X, Copy, ShieldCheck, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { QrCode, CheckCircle2, X, Copy, ShieldCheck, ArrowRight, Image as ImageIcon } from 'lucide-react';
 import { TenantConfig } from '../types';
 
 interface VietQRModalProps {
@@ -20,6 +20,16 @@ export const VietQRModal: React.FC<VietQRModalProps> = ({
   tenant,
 }) => {
   const [copied, setCopied] = useState(false);
+  const customQrUrl = tenant?.vietqrConfig?.customQrUrl;
+  const [mode, setMode] = useState<'custom' | 'dynamic'>(customQrUrl ? 'custom' : 'dynamic');
+
+  useEffect(() => {
+    if (customQrUrl) {
+      setMode('custom');
+    } else {
+      setMode('dynamic');
+    }
+  }, [customQrUrl, isOpen]);
 
   if (!isOpen) return null;
 
@@ -32,6 +42,8 @@ export const VietQRModal: React.FC<VietQRModalProps> = ({
   const qrImageUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(
     addInfo
   )}&accountName=${encodeURIComponent(accountName)}`;
+
+  const currentQrImage = mode === 'custom' && customQrUrl ? customQrUrl : qrImageUrl;
 
   const handleCopyAccount = () => {
     navigator.clipboard.writeText(accountNo);
@@ -62,22 +74,55 @@ export const VietQRModal: React.FC<VietQRModalProps> = ({
         </div>
 
         {/* Amount display */}
-        <div className="text-center py-3 px-4 rounded-2xl bg-gradient-to-r from-[#FF5500]/15 via-[#FF5500]/5 to-transparent border border-[#FF5500]/25 mb-4">
+        <div className="text-center py-3 px-4 rounded-2xl bg-gradient-to-r from-[#FF5500]/15 via-[#FF5500]/5 to-transparent border border-[#FF5500]/25 mb-3">
           <span className="text-xs text-white/60 font-medium">Số tiền cần thanh toán</span>
           <div className="text-2xl sm:text-3xl font-black text-[#FF5500] font-mono tracking-tight">
             {amount.toLocaleString('vi-VN')} <span className="text-base font-normal">đ</span>
           </div>
         </div>
 
+        {/* Tab selector if custom QR is available */}
+        {customQrUrl && (
+          <div className="flex rounded-xl bg-white/5 border border-white/10 p-1 mb-3 text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => setMode('custom')}
+              className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                mode === 'custom'
+                  ? 'bg-[#FF5500] text-black font-bold shadow-[0_2px_10px_rgba(255,85,0,0.3)]'
+                  : 'text-white/70 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <ImageIcon className="w-3.5 h-3.5" />
+              <span>Ảnh QR Cửa Hàng</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('dynamic')}
+              className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                mode === 'dynamic'
+                  ? 'bg-[#FF5500] text-black font-bold shadow-[0_2px_10px_rgba(255,85,0,0.3)]'
+                  : 'text-white/70 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <QrCode className="w-3.5 h-3.5" />
+              <span>VietQR Tự Động</span>
+            </button>
+          </div>
+        )}
+
         {/* QR Code Frame */}
-        <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white shadow-inner mb-4">
+        <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white shadow-inner mb-4 min-h-[220px]">
           <img
-            src={qrImageUrl}
-            alt="Mã VietQR"
-            className="w-56 h-auto object-contain rounded-lg"
+            src={currentQrImage}
+            alt={mode === 'custom' ? 'Mã QR Cửa Hàng' : 'Mã VietQR'}
+            className="max-h-60 max-w-[240px] w-auto h-auto object-contain rounded-lg transition-transform duration-200"
           />
-          <span className="text-[11px] text-neutral-600 font-medium mt-1 flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Quét bằng bất kỳ App Ngân Hàng hoặc MoMo
+          <span className="text-[11px] text-neutral-600 font-medium mt-2 flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            {mode === 'custom'
+              ? 'Quét bằng bất kỳ App Ngân Hàng hoặc Ví điện tử'
+              : 'Quét bằng bất kỳ App Ngân Hàng hoặc MoMo'}
           </span>
         </div>
 
