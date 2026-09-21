@@ -20,9 +20,18 @@ export const Footer: React.FC = () => {
                 brandSub={t.nav.brandSub}
               />
             </div>
-            <p className="text-neutral-400 text-sm leading-relaxed max-w-sm mb-6 font-normal">
+            <p className="text-neutral-400 text-sm leading-relaxed max-w-sm mb-4 font-normal">
               {t.footer.desc}
             </p>
+
+            <div className="flex flex-col gap-1 text-xs text-neutral-400 mb-5 font-mono">
+              <a href="mailto:phamkhang1234549@gmail.com" className="hover:text-[#FF5500] transition-colors">
+                ✉ phamkhang1234549@gmail.com
+              </a>
+              <a href="tel:0345603279" className="hover:text-emerald-400 transition-colors">
+                ☎ Hotline: 0345 603 279
+              </a>
+            </div>
 
             <div className="flex flex-wrap gap-2 text-[11px] font-mono text-white/50">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 whitespace-nowrap shrink-0">

@@ -66,7 +66,9 @@ export const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-white/40 text-xs font-mono uppercase">{t.contact.emailLabel}</div>
-                    <div className="text-white font-medium text-sm">contact@vnbgroup.vn</div>
+                    <a href="mailto:phamkhang1234549@gmail.com" className="text-white hover:text-[#FF5500] font-medium text-sm transition-colors">
+                      phamkhang1234549@gmail.com
+                    </a>
                   </div>
                 </div>
 
@@ -76,7 +78,9 @@ export const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-white/40 text-xs font-mono uppercase">{t.contact.hotlineLabel}</div>
-                    <div className="text-white font-medium text-sm">+84 (0) 24 8888 9999</div>
+                    <a href="tel:0345603279" className="text-white hover:text-emerald-400 font-medium text-sm transition-colors">
+                      0345 603 279
+                    </a>
                   </div>
                 </div>
 
