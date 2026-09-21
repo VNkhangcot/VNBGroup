@@ -24,7 +24,7 @@ export const AuthScreen: React.FC = () => {
   const [tab, setTab] = useState<'login' | 'pin'>('login');
 
   // Form states - Login
-  const [identifier, setIdentifier] = useState('VNkhangcot');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -242,7 +242,7 @@ export const AuthScreen: React.FC = () => {
                       required
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
-                      placeholder="VNkhangcot..."
+                      placeholder="Nhập tên đăng nhập hoặc email..."
                       className="w-full pl-10 pr-4 py-3 rounded-xl liquid-glass-input text-sm text-white placeholder-white/30 font-medium"
                     />
                   </div>
