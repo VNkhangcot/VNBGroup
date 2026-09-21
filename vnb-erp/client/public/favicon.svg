@@ -1,0 +1,69 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Luxury Obsidian Background Gradient -->
+    <linearGradient id="favBg" x1="24" y1="2" x2="24" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#1C1C24" />
+      <stop offset="50%" stopColor="#0E0E14" />
+      <stop offset="100%" stopColor="#060609" />
+    </linearGradient>
+
+    <!-- Left Primary Facet - Pure Crisp Platinum White -->
+    <linearGradient id="facetPlatinumWhite" x1="10" y1="12" x2="24" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#FFFFFF" />
+      <stop offset="50%" stopColor="#F8FAFC" />
+      <stop offset="100%" stopColor="#E2E8F0" />
+    </linearGradient>
+
+    <!-- Left Lower Bevel - Solid Sculpted Platinum Silver -->
+    <linearGradient id="facetPlatinumBevel" x1="17" y1="26" x2="24" y2="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#CBD5E1" />
+      <stop offset="100%" stopColor="#94A3B8" />
+    </linearGradient>
+
+    <!-- Right Primary Facet - Luxury 24K Royal Gold Gradient -->
+    <linearGradient id="facetRoyalGold" x1="24" y1="24" x2="38" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#FFE68C" />
+      <stop offset="35%" stopColor="#F5C042" />
+      <stop offset="75%" stopColor="#E5A823" />
+      <stop offset="100%" stopColor="#C68712" />
+    </linearGradient>
+
+    <!-- Right Lower Bevel - Deep Solid Amber Gold Bronze -->
+    <linearGradient id="facetGoldBevel" x1="24" y1="26" x2="30" y2="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#D99414" />
+      <stop offset="100%" stopColor="#8C5807" />
+    </linearGradient>
+
+    <!-- Crest Diamond - Pure Brilliant Diamond Light -->
+    <linearGradient id="crestDiamond" x1="24" y1="6" x2="24" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#FFFFFF" />
+      <stop offset="60%" stopColor="#F8FAFC" />
+      <stop offset="100%" stopColor="#CBD5E1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Luxury Obsidian Badge Frame -->
+  <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#favBg)" stroke="rgba(255, 255, 255, 0.16)" stroke-width="1.2" />
+  <rect x="2" y="2" width="44" height="44" rx="12" stroke="#E5A823" stroke-width="1.2" stroke-opacity="0.3" />
+
+  <!-- FACET 1: Left Wing Main (Crisp Platinum White) -->
+  <path d="M 10 13 L 19 13 L 24 25 L 16 28 Z" fill="url(#facetPlatinumWhite)" />
+
+  <!-- FACET 2: Left Wing Lower Anchor (Solid Sculpted Platinum Silver) -->
+  <path d="M 16 28 L 24 25 L 24 38 L 19 38 Z" fill="url(#facetPlatinumBevel)" />
+
+  <!-- FACET 3: Right Wing Main (Luxury 24K Royal Gold) -->
+  <path d="M 38 13 L 29 13 L 24 25 L 32 28 Z" fill="url(#facetRoyalGold)" />
+
+  <!-- FACET 4: Right Wing Lower Anchor (Deep Amber Gold Bronze) -->
+  <path d="M 32 28 L 24 25 L 24 38 L 29 38 Z" fill="url(#facetGoldBevel)" />
+
+  <!-- CENTER CREST: Architectural Floating Diamond -->
+  <path d="M 24 8 L 28 14 L 24 20 L 20 14 Z" fill="url(#crestDiamond)" />
+
+  <!-- Crest highlight line -->
+  <line x1="24" y1="8" x2="24" y2="20" stroke="#FFFFFF" stroke-width="0.75" stroke-opacity="0.9" />
+
+  <!-- Subtle central precision separator line -->
+  <line x1="24" y1="25" x2="24" y2="38" stroke="#08080C" stroke-width="0.75" />
+</svg>

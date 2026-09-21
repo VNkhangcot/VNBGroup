@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <!-- Left Primary Facet - Pure Crisp Platinum White -->
+    <linearGradient id="facetPlatinumWhite" x1="10" y1="12" x2="24" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#E2E8F0" />
+    </linearGradient>
+
+    <!-- Left Lower Bevel - Solid Sculpted Platinum Silver -->
+    <linearGradient id="facetPlatinumBevel" x1="17" y1="26" x2="24" y2="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#CBD5E1" />
+      <stop offset="100%" stop-color="#94A3B8" />
+    </linearGradient>
+
+    <!-- Right Primary Facet - Luxury 24K Royal Gold Gradient -->
+    <linearGradient id="facetRoyalGold" x1="24" y1="24" x2="38" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFE68C" />
+      <stop offset="35%" stop-color="#F5C042" />
+      <stop offset="75%" stop-color="#E5A823" />
+      <stop offset="100%" stop-color="#C68712" />
+    </linearGradient>
+
+    <!-- Right Lower Bevel - Deep Solid Amber Gold Bronze -->
+    <linearGradient id="facetGoldBevel" x1="24" y1="26" x2="30" y2="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#D99414" />
+      <stop offset="100%" stop-color="#8C5807" />
+    </linearGradient>
+
+    <!-- Crest Diamond - Pure Brilliant Diamond Light -->
+    <linearGradient id="crestDiamond" x1="24" y1="6" x2="24" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter for Architectural Depth -->
+    <filter id="monolithShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- FACET 1: Left Wing Main (Crisp Platinum White) -->
+  <path d="M 10 13 L 19 13 L 24 25 L 16 28 Z" fill="url(#facetPlatinumWhite)" filter="url(#monolithShadow)" />
+
+  <!-- FACET 2: Left Wing Lower Anchor (Solid Sculpted Platinum Silver) -->
+  <path d="M 16 28 L 24 25 L 24 38 L 19 38 Z" fill="url(#facetPlatinumBevel)" />
+
+  <!-- FACET 3: Right Wing Main (Luxury 24K Royal Gold) -->
+  <path d="M 38 13 L 29 13 L 24 25 L 32 28 Z" fill="url(#facetRoyalGold)" filter="url(#monolithShadow)" />
+
+  <!-- FACET 4: Right Wing Lower Anchor (Deep Amber Gold Bronze) -->
+  <path d="M 32 28 L 24 25 L 24 38 L 29 38 Z" fill="url(#facetGoldBevel)" />
+
+  <!-- CENTER CREST: Architectural Floating Diamond (Precision Apex) -->
+  <path d="M 24 8 L 28 14 L 24 20 L 20 14 Z" fill="url(#crestDiamond)" filter="url(#monolithShadow)" />
+
+  <!-- DIAMOND REFLECTION LINE -->
+  <line x1="24" y1="8" x2="24" y2="20" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.9" />
+
+  <!-- Central Precision Separator Line -->
+  <line x1="24" y1="25" x2="24" y2="38" stroke="#0A0A0E" stroke-width="0.75" />
+</svg>

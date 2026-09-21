@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 56" fill="none">
+  <defs>
+    <!-- Luxury Obsidian Background Gradient for Emblem Badge -->
+    <linearGradient id="fullLogoEmbBg" x1="28" y1="4" x2="28" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1C1C24" />
+      <stop offset="50%" stop-color="#0E0E14" />
+      <stop offset="100%" stop-color="#060609" />
+    </linearGradient>
+
+    <!-- Left Primary Facet - Pure Crisp Platinum White -->
+    <linearGradient id="fullFacetWhite" x1="14" y1="14" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#E2E8F0" />
+    </linearGradient>
+
+    <!-- Left Lower Bevel - Solid Sculpted Platinum Silver -->
+    <linearGradient id="fullFacetSilver" x1="21" y1="28" x2="28" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#CBD5E1" />
+      <stop offset="100%" stop-color="#94A3B8" />
+    </linearGradient>
+
+    <!-- Right Primary Facet - Luxury 24K Royal Gold Gradient -->
+    <linearGradient id="fullFacetGold" x1="28" y1="26" x2="42" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFE68C" />
+      <stop offset="35%" stop-color="#F5C042" />
+      <stop offset="75%" stop-color="#E5A823" />
+      <stop offset="100%" stop-color="#C68712" />
+    </linearGradient>
+
+    <!-- Right Lower Bevel - Deep Solid Amber Gold Bronze -->
+    <linearGradient id="fullFacetBronze" x1="28" y1="28" x2="34" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#D99414" />
+      <stop offset="100%" stop-color="#8C5807" />
+    </linearGradient>
+
+    <!-- Crest Diamond - Pure Brilliant Diamond Light -->
+    <linearGradient id="fullCrestDiamond" x1="28" y1="8" x2="28" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter for Architectural Depth -->
+    <filter id="fullShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- ================= EMBLEM ICON (Left) ================= -->
+  <g transform="translate(2, 4)">
+    <!-- Badge Frame -->
+    <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#fullLogoEmbBg)" stroke="rgba(255, 255, 255, 0.16)" stroke-width="1.2" />
+    <rect x="2" y="2" width="44" height="44" rx="12" stroke="#E5A823" stroke-width="1.2" stroke-opacity="0.35" />
+
+    <!-- FACET 1: Left Wing Main (Crisp Platinum White) -->
+    <path d="M 10 13 L 19 13 L 24 25 L 16 28 Z" fill="url(#fullFacetWhite)" filter="url(#fullShadow)" />
+
+    <!-- FACET 2: Left Wing Lower Anchor (Solid Sculpted Platinum Silver) -->
+    <path d="M 16 28 L 24 25 L 24 38 L 19 38 Z" fill="url(#fullFacetSilver)" />
+
+    <!-- FACET 3: Right Wing Main (Luxury 24K Royal Gold) -->
+    <path d="M 38 13 L 29 13 L 24 25 L 32 28 Z" fill="url(#fullFacetGold)" filter="url(#fullShadow)" />
+
+    <!-- FACET 4: Right Wing Lower Anchor (Deep Amber Gold Bronze) -->
+    <path d="M 32 28 L 24 25 L 24 38 L 29 38 Z" fill="url(#fullFacetBronze)" />
+
+    <!-- CENTER CREST: Architectural Floating Diamond -->
+    <path d="M 24 8 L 28 14 L 24 20 L 20 14 Z" fill="url(#fullCrestDiamond)" filter="url(#fullShadow)" />
+
+    <!-- Reflection line -->
+    <line x1="24" y1="8" x2="24" y2="20" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.9" />
+
+    <!-- Separator line -->
+    <line x1="24" y1="25" x2="24" y2="38" stroke="#0A0A0E" stroke-width="0.75" />
+  </g>
+
+  <!-- ================= TYPOGRAPHY (Right) ================= -->
+  <!-- VNB in bold geometric sans -->
+  <text x="64" y="32" font-family="'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="22" letter-spacing="1.5" fill="#FFFFFF">
+    VNB
+  </text>
+
+  <!-- GROUP in light luxury tracking -->
+  <text x="122" y="32" font-family="'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-weight="300" font-size="22" letter-spacing="4.5" fill="#E5A823">
+    GROUP
+  </text>
+
+  <!-- Subtitle: HOLDINGS & TECHNOLOGY -->
+  <text x="64" y="46" font-family="'JetBrains Mono', 'Roboto Mono', 'SF Mono', Consolas, monospace" font-weight="600" font-size="7.5" letter-spacing="2.8" fill="#94A3B8" opacity="0.85">
+    HOLDINGS &amp; TECHNOLOGY
+  </text>
+</svg>

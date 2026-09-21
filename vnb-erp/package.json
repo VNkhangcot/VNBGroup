@@ -1,0 +1,10 @@
+{
+  "name": "vnb-business-os",
+  "version": "1.0.0",
+  "description": "Hệ thống quản trị doanh nghiệp và bán lẻ đa quy mô phong cách Liquid Glass (Node.js + MongoDB + React 19)",
+  "scripts": {
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "npm --prefix server run build && npm --prefix client run build"
+  }
+}
