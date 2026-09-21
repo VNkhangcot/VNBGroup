@@ -96,81 +96,25 @@ const seed = async () => {
     console.log('✔ Seeded 3 Corporate SaaS Packages');
   }
 
-  // 3. Seed Users (Superadmin + Owner + Cashiers)
-  const defaultPasswordHash = await bcrypt.hash('vnb123', 10);
-
-  // 3.1 Super Admin (Quản trị tập đoàn)
-  const existingSuperAdmin = await UserModel.findOne({ username: 'superadmin' });
+  // 3. Seed Users - Sole Highest Super Admin
+  const existingSuperAdmin = await UserModel.findOne({ username: 'vnkhangcot' });
   if (!existingSuperAdmin) {
+    const passwordHash = await bcrypt.hash('Khang123123', 10);
     await UserModel.create({
-      username: 'superadmin',
-      email: 'hq@vnbgroup.vn',
-      passwordHash: defaultPasswordHash,
-      fullName: 'VNB Group - Ban Giám Đốc Tập Đoàn',
+      username: 'VNkhangcot',
+      email: 'vnkhangcot@vnb.io.vn',
+      passwordHash,
+      fullName: 'VNkhangcot',
       role: 'superadmin',
       pinCode: '9999',
-      tenantId: tenant._id,
-      avatar: '🏛️',
-      isActive: true,
-    });
-    console.log('✔ Seeded Super Admin: superadmin / vnb123 (PIN: 9999)');
-  }
-
-  // 3.2 Owner (Chủ tiệm)
-  const existingOwner = await UserModel.findOne({ username: 'admin' });
-  if (!existingOwner) {
-    await UserModel.create({
-      username: 'admin',
-      email: 'admin@vnbgroup.vn',
-      passwordHash: defaultPasswordHash,
-      fullName: 'Anh Vũ - Chủ Tiệm VNB',
-      role: 'owner',
-      pinCode: '8888',
       tenantId: tenant._id,
       avatar: '👑',
       isActive: true,
     });
-    console.log('✔ Seeded Store Owner: admin / vnb123');
+    console.log('✔ Seeded Highest Super Admin: VNkhangcot / Khang123123 (PIN: 9999)');
   }
 
-  // 3.3 Cashier Cô Hoa
-  const existingCashier = await UserModel.findOne({ username: 'cohoa' });
-  if (!existingCashier) {
-    await UserModel.create({
-      username: 'cohoa',
-      email: 'cohoa@vnbgroup.vn',
-      passwordHash: defaultPasswordHash,
-      fullName: 'Cô Hoa - Thu Ngân Ca Sáng',
-      role: 'cashier',
-      pinCode: '1234',
-      tenantId: tenant._id,
-      avatar: '💼',
-      isActive: true,
-    });
-    console.log('✔ Seeded Cashier: cohoa / vnb123');
-  }
-
-  // 4. Seed Products
-  const count = await ProductModel.countDocuments();
-  if (count === 0) {
-    for (const p of memoryStore.products) {
-      const { _id, ...rest } = p;
-      await ProductModel.create(rest);
-    }
-    console.log(`✔ Seeded ${memoryStore.products.length} products`);
-  }
-
-  // 5. Seed Debts
-  const debtCount = await CustomerDebtModel.countDocuments();
-  if (debtCount === 0) {
-    for (const d of memoryStore.debts) {
-      const { _id, ...rest } = d;
-      await CustomerDebtModel.create(rest);
-    }
-    console.log(`✔ Seeded ${memoryStore.debts.length} customer debts`);
-  }
-
-  console.log('Seeding completed successfully!');
+  console.log('Database verification completed!');
   await mongoose.disconnect();
 };
 

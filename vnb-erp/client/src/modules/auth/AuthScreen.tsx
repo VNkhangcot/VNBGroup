@@ -21,27 +21,19 @@ import { api } from '../../api/client';
 import { StaffMember } from '../../types';
 
 export const AuthScreen: React.FC = () => {
-  const [tab, setTab] = useState<'login' | 'pin' | 'register'>('login');
+  const [tab, setTab] = useState<'login' | 'pin'>('login');
 
   // Form states - Login
-  const [identifier, setIdentifier] = useState('admin');
-  const [password, setPassword] = useState('vnb123');
+  const [identifier, setIdentifier] = useState('VNkhangcot');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
-  // Form states - Register
-  const [storeName, setStoreName] = useState('');
-  const [storePhone, setStorePhone] = useState('');
-  const [regFullName, setRegFullName] = useState('');
-  const [regUsername, setRegUsername] = useState('');
-  const [regPassword, setRegPassword] = useState('');
-  const [regPin, setRegPin] = useState('8888');
 
   // Form states - PIN Switcher
   const [staffList, setStaffList] = useState<StaffMember[]>([]);
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
   const [pinDigits, setPinDigits] = useState<string>('');
 
-  const { login, register, pinLogin, isLoading, error, clearError } = useAuthStore();
+  const { login, pinLogin, isLoading, error, clearError } = useAuthStore();
 
   // Load staff list for PIN tab
   useEffect(() => {
@@ -50,9 +42,8 @@ export const AuthScreen: React.FC = () => {
       .then((list) => {
         setStaffList(list);
         if (list.length > 0) {
-          // Select cashier by default if available
-          const cashier = list.find((s) => s.role === 'cashier') || list[0];
-          setSelectedStaff(cashier);
+          const defaultUser = list.find((s) => s.role === 'superadmin') || list[0];
+          setSelectedStaff(defaultUser);
         }
       })
       .catch((err) => console.error('Failed to load staff list:', err));
@@ -62,23 +53,6 @@ export const AuthScreen: React.FC = () => {
     e.preventDefault();
     clearError();
     await login(identifier, password);
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    clearError();
-    if (!storeName || !regFullName || !regUsername || !regPassword) {
-      alert('Vui lòng điền đầy đủ các thông tin bắt buộc');
-      return;
-    }
-    await register({
-      storeName,
-      storePhone,
-      fullName: regFullName,
-      username: regUsername,
-      password: regPassword,
-      pinCode: regPin,
-    });
   };
 
   // Numpad input for PIN
@@ -103,25 +77,6 @@ export const AuthScreen: React.FC = () => {
 
   const handlePinBackspace = () => {
     setPinDigits((prev) => prev.slice(0, -1));
-  };
-
-  // Quick Demo Logins
-  const handleDemoSuperAdmin = () => {
-    setIdentifier('superadmin');
-    setPassword('vnb123');
-    login('superadmin', 'vnb123');
-  };
-
-  const handleDemoOwner = () => {
-    setIdentifier('admin');
-    setPassword('vnb123');
-    login('admin', 'vnb123');
-  };
-
-  const handleDemoCashier = () => {
-    setIdentifier('cohoa');
-    setPassword('vnb123');
-    login('cohoa', 'vnb123');
   };
 
   return (
@@ -253,21 +208,6 @@ export const AuthScreen: React.FC = () => {
               <KeyRound className="w-3.5 h-3.5" />
               <span>Đổi Ca (PIN)</span>
             </button>
-
-            <button
-              onClick={() => {
-                setTab('register');
-                clearError();
-              }}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                tab === 'register'
-                  ? 'bg-gradient-to-r from-[#FF5500] to-[#E5A823] text-black shadow-lg'
-                  : 'text-white/60 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Store className="w-3.5 h-3.5" />
-              <span>Mở Cửa Hàng</span>
-            </button>
           </div>
 
           {/* Error Message Toast */}
@@ -284,9 +224,9 @@ export const AuthScreen: React.FC = () => {
           {tab === 'login' && (
             <div>
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-white">Đăng Nhập Doanh Nghiệp</h3>
+                <h3 className="text-xl font-bold text-white">Đăng Nhập Quản Trị</h3>
                 <p className="text-xs text-white/50 mt-1">
-                  Dành cho Chủ tiệm và Quản lý để truy cập đầy đủ báo cáo & quản trị
+                  Đăng nhập với tài khoản Super Admin hoặc Quản lý hệ thống
                 </p>
               </div>
 
@@ -302,7 +242,7 @@ export const AuthScreen: React.FC = () => {
                       required
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
-                      placeholder="admin hoặc email..."
+                      placeholder="VNkhangcot..."
                       className="w-full pl-10 pr-4 py-3 rounded-xl liquid-glass-input text-sm text-white placeholder-white/30 font-medium"
                     />
                   </div>
@@ -341,15 +281,6 @@ export const AuthScreen: React.FC = () => {
                     />
                     <span>Ghi nhớ phiên đăng nhập</span>
                   </label>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      alert('Vui lòng liên hệ Admin VNB Group hoặc đăng nhập bằng tài khoản mẫu bên dưới!')
-                    }
-                    className="text-[#FF5500] hover:underline"
-                  >
-                    Quên mật khẩu?
-                  </button>
                 </div>
 
                 <button
@@ -367,56 +298,6 @@ export const AuthScreen: React.FC = () => {
                   )}
                 </button>
               </form>
-
-              {/* DEMO 1-CLICK ACCESS BUTTONS */}
-              <div className="mt-8 pt-6 border-t border-white/10">
-                <div className="text-[11px] font-mono text-white/50 uppercase tracking-wider mb-3 text-center">
-                  ⚡ Kiểm thử nhanh với tài khoản Demo 1-Chạm:
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={handleDemoSuperAdmin}
-                    className="p-2 sm:p-2.5 rounded-xl liquid-glass border border-purple-500/40 hover:border-purple-400 bg-purple-950/20 text-center sm:text-left cursor-pointer transition-all group active:scale-95"
-                  >
-                    <div className="flex flex-col sm:flex-row items-center sm:gap-1.5 mb-0.5">
-                      <span className="text-base">🏛️</span>
-                      <span className="text-[11px] sm:text-xs font-bold text-white group-hover:text-purple-300 truncate">
-                        Admin HQ
-                      </span>
-                    </div>
-                    <div className="text-[9px] sm:text-[10px] text-white/40 font-mono truncate">superadmin</div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleDemoOwner}
-                    className="p-2 sm:p-2.5 rounded-xl liquid-glass border border-[#E5A823]/40 hover:border-[#E5A823] text-center sm:text-left cursor-pointer transition-all group active:scale-95"
-                  >
-                    <div className="flex flex-col sm:flex-row items-center sm:gap-1.5 mb-0.5">
-                      <span className="text-base">👑</span>
-                      <span className="text-[11px] sm:text-xs font-bold text-white group-hover:text-[#E5A823] truncate">
-                        Chủ Tiệm
-                      </span>
-                    </div>
-                    <div className="text-[9px] sm:text-[10px] text-white/40 font-mono truncate">admin</div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleDemoCashier}
-                    className="p-2 sm:p-2.5 rounded-xl liquid-glass border border-emerald-500/40 hover:border-emerald-500 text-center sm:text-left cursor-pointer transition-all group active:scale-95"
-                  >
-                    <div className="flex flex-col sm:flex-row items-center sm:gap-1.5 mb-0.5">
-                      <span className="text-base">💼</span>
-                      <span className="text-[11px] sm:text-xs font-bold text-white group-hover:text-emerald-400 truncate">
-                        Thu Ngân
-                      </span>
-                    </div>
-                    <div className="text-[9px] sm:text-[10px] text-white/40 font-mono truncate">cohoa</div>
-                  </button>
-                </div>
-              </div>
             </div>
           )}
 
@@ -481,7 +362,7 @@ export const AuthScreen: React.FC = () => {
               </div>
 
               <div className="text-[11px] text-white/50 font-mono mb-4 text-center">
-                Mẹo: Mã PIN mẫu Cô Hoa: <strong className="text-emerald-400">1234</strong> • Anh Nam: <strong className="text-emerald-400">5678</strong> • Chủ tiệm: <strong className="text-[#E5A823]">8888</strong> • Super Admin: <strong className="text-purple-400">9999</strong>
+                Nhập mã PIN 4 số của nhân viên để đăng nhập nhanh
               </div>
 
               {/* Luxury Virtual Touch NumPad */}
@@ -521,127 +402,6 @@ export const AuthScreen: React.FC = () => {
                   <Delete className="w-5 h-5" />
                 </button>
               </div>
-            </div>
-          )}
-
-          {/* ========================================================================= */}
-          {/* TAB 3: REGISTER NEW STORE / TENANT */}
-          {/* ========================================================================= */}
-          {tab === 'register' && (
-            <div>
-              <div className="mb-5">
-                <h3 className="text-xl font-bold text-white">Khởi Tạo Cửa Hàng Mới</h3>
-                <p className="text-xs text-white/50 mt-1">
-                  Đăng ký tài khoản Chủ tiệm & kích hoạt hệ thống bán hàng riêng biệt
-                </p>
-              </div>
-
-              <form onSubmit={handleRegister} className="space-y-3.5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-mono text-white/70 uppercase tracking-wider mb-1">
-                      Tên Cửa Hàng / Tiệm *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={storeName}
-                      onChange={(e) => setStoreName(e.target.value)}
-                      placeholder="VD: Tạp Hóa An Lộc"
-                      className="w-full px-3 py-2.5 rounded-xl liquid-glass-input text-xs text-white placeholder-white/30"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono text-white/70 uppercase tracking-wider mb-1">
-                      Số Điện Thoại
-                    </label>
-                    <input
-                      type="text"
-                      value={storePhone}
-                      onChange={(e) => setStorePhone(e.target.value)}
-                      placeholder="0988 888 888"
-                      className="w-full px-3 py-2.5 rounded-xl liquid-glass-input text-xs text-white placeholder-white/30 font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono text-white/70 uppercase tracking-wider mb-1">
-                    Họ Và Tên Chủ Tiệm *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={regFullName}
-                    onChange={(e) => setRegFullName(e.target.value)}
-                    placeholder="VD: Nguyễn Văn Hưng"
-                    className="w-full px-3 py-2.5 rounded-xl liquid-glass-input text-xs text-white placeholder-white/30"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-mono text-white/70 uppercase tracking-wider mb-1">
-                      Tên Đăng Nhập *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={regUsername}
-                      onChange={(e) => setRegUsername(e.target.value)}
-                      placeholder="chutiem2026"
-                      className="w-full px-3 py-2.5 rounded-xl liquid-glass-input text-xs text-white placeholder-white/30"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono text-white/70 uppercase tracking-wider mb-1">
-                      Mật Khẩu *
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      value={regPassword}
-                      onChange={(e) => setRegPassword(e.target.value)}
-                      placeholder="Tối thiểu 6 ký tự"
-                      className="w-full px-3 py-2.5 rounded-xl liquid-glass-input text-xs text-white placeholder-white/30"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono text-white/70 uppercase tracking-wider mb-1">
-                    Mã PIN Mở Ca Trực (4 số)
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={4}
-                    value={regPin}
-                    onChange={(e) => setRegPin(e.target.value)}
-                    placeholder="8888"
-                    className="w-full px-3 py-2.5 rounded-xl liquid-glass-input text-xs text-[#E5A823] font-mono font-bold tracking-widest"
-                  />
-                  <span className="text-[10px] text-white/40 mt-0.5 block">
-                    Dùng để đăng nhập nhanh tại quầy thu ngân không cần gõ mật khẩu dài.
-                  </span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#FF5500] to-[#E5A823] hover:from-[#FF6611] hover:to-[#F5C042] text-black font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl cursor-pointer transition-all active:scale-[0.98] mt-2"
-                >
-                  {isLoading ? (
-                    <span>Đang khởi tạo hệ thống...</span>
-                  ) : (
-                    <>
-                      <span>Khởi Tạo Cửa Hàng & Bắt Đầu Bán Hàng</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </form>
             </div>
           )}
 

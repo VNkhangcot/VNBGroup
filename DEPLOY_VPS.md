@@ -91,52 +91,165 @@ pm2 logs vnb-erp-api
 
 ---
 
-## 5. Cấu Hình Nginx Reverse Proxy
+## 5. Cấu Hình Tên Miền & Nginx Reverse Proxy
 
-Tạo file cấu hình Nginx: `sudo nano /etc/nginx/sites-available/vnbgroup`
+### 5.1. Cấu hình DNS (Tại nhà cung cấp tên miền của bạn)
+Trỏ các bản ghi DNS sau về địa chỉ IP của VPS:
+
+| Loại (Type) | Tên bản ghi (Host / Name) | Giá trị (Value / Points to) | Mục đích |
+| :--- | :--- | :--- | :--- |
+| **A** | `@` (hoặc `vnb.io.vn`) | `<IP_VPS_CỦA_BẠN>` | Landing page chính |
+| **A** hoặc **CNAME** | `www` | `<IP_VPS_CỦA_BẠN>` (hoặc `vnb.io.vn`) | Phụ cho Landing page |
+| **A** hoặc **CNAME** | `pos` | `<IP_VPS_CỦA_BẠN>` (hoặc `vnb.io.vn`) | Ứng dụng ERP / POS & API |
+
+---
+
+### 5.2. Cấu hình Nginx
+
+File cấu hình mẫu đã có sẵn tại `nginx/vnbgroup.conf`. Bạn có thể copy trực tiếp vào Nginx:
+
+```bash
+# Copy cấu hình vào Nginx sites-available
+sudo cp /var/www/VNBGroup/nginx/vnbgroup.conf /etc/nginx/sites-available/vnbgroup
+
+# Hoặc tạo mới bằng nano: sudo nano /etc/nginx/sites-available/vnbgroup
+```
+
+Nội dung cấu hình chi tiết:
 
 ```nginx
+# ==============================================================================
+# 1. LANDING PAGE: vnb.io.vn & www.vnb.io.vn
+# ==============================================================================
 server {
     listen 80;
-    server_name your-domain.com www.your-domain.com; # Thay bằng tên miền của bạn
+    listen [::]:80;
+    server_name vnb.io.vn www.vnb.io.vn;
 
-    # 1. ERP App Client & POS
-    location /app/ {
-        alias /var/www/VNBGroup/vnb-erp/client/dist/;
-        index index.html;
-        try_files $uri $uri/ /app/index.html;
+    root /var/www/VNBGroup/dist;
+    index index.html;
+
+    # Gzip Compression
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/rss+xml application/atom+xml image/svg+xml;
+
+    # Security Headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "no-referrer-when-downgrade" always;
+
+    # Static Assets Caching (1 year)
+    location ~* \.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg|webp|avif)$ {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, max-age=31536000, immutable";
     }
 
-    # 2. Backend API
+    # SPA Routing Fallback
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+# ==============================================================================
+# 2. ERP / POS APPLICATION & BACKEND API: pos.vnb.io.vn
+# ==============================================================================
+server {
+    listen 80;
+    listen [::]:80;
+    server_name pos.vnb.io.vn;
+
+    root /var/www/VNBGroup/vnb-erp/client/dist;
+    index index.html;
+
+    # Dung lượng tối đa khi tải lên hình ảnh sản phẩm/hóa đơn
+    client_max_body_size 25M;
+
+    # Gzip Compression
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/rss+xml application/atom+xml image/svg+xml;
+
+    # Security Headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+
+    # Backend API Reverse Proxy (Express.js port 5000)
     location /api/ {
-        proxy_pass http://localhost:5000/api/;
+        proxy_pass http://127.0.0.1:5000/api/;
         proxy_http_version 1.1;
+
+        # WebSocket & HTTP Upgrade
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
+
+        # Forwarded Client Info
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Timeouts
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+
+        # Buffering
+        proxy_buffering on;
+        proxy_buffer_size 128k;
+        proxy_buffers 4 256k;
+        proxy_busy_buffers_size 256k;
     }
 
-    # 3. Landing Page (Root)
+    # Static Assets Caching (1 year)
+    location ~* \.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg|webp|avif)$ {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # SPA Routing Fallback for ERP Frontend
     location / {
-        root /var/www/VNBGroup/dist;
-        index index.html;
         try_files $uri $uri/ /index.html;
     }
 }
 ```
 
-Kích hoạt cấu hình Nginx và cài đặt SSL:
+---
+
+### 5.3. Kích Hoạt Nginx & Cấp Chứng Chỉ SSL (HTTPS)
+
 ```bash
-sudo ln -s /etc/nginx/sites-available/vnbgroup /etc/nginx/sites-enabled/
+# Tạo liên kết kích hoạt cấu hình
+sudo ln -sf /etc/nginx/sites-available/vnbgroup /etc/nginx/sites-enabled/
+
+# Kiểm tra cú pháp cấu hình Nginx
 sudo nginx -t
+
+# Nạp lại Nginx
 sudo systemctl reload nginx
 
-# Cài đặt chứng chỉ SSL tự động
+# Cài đặt và cấp chứng chỉ SSL miễn phí Let's Encrypt cho cả 3 domain
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+sudo certbot --nginx -d vnb.io.vn -d www.vnb.io.vn -d pos.vnb.io.vn
+```
+*(Certbot sẽ tự động gia hạn SSL và tự động cập nhật cấu hình Nginx sang HTTPS port 443).*
+
+---
+
+### 5.4. Tự Động Cập Nhật Triển Khai (One-Click Deploy)
+
+Mỗi lần cập nhật code mới, bạn chỉ cần đứng tại thư mục `/var/www/VNBGroup` và chạy:
+```bash
+bash scripts/deploy.sh
 ```
 
 ---
