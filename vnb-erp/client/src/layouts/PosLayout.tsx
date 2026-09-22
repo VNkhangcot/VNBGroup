@@ -14,7 +14,6 @@ import {
   QrCode,
   ShieldCheck,
   User,
-  KeyRound,
   LogOut,
   Lock,
   Crown,
@@ -27,7 +26,6 @@ import { ProductListScreen } from '../modules/products/ProductListScreen';
 import { DebtBookScreen } from '../modules/debts/DebtBookScreen';
 import { AnalyticsScreen } from '../modules/reports/AnalyticsScreen';
 import { SettingsScreen } from '../modules/settings/SettingsScreen';
-import { QuickPinModal } from '../components/QuickPinModal';
 
 export type ActiveTab = 'pos' | 'products' | 'debts' | 'analytics' | 'settings';
 
@@ -39,7 +37,6 @@ export const PosLayout: React.FC<PosLayoutProps> = ({ onSwitchToAdminView }) => 
   const [activeTab, setActiveTab] = useState<ActiveTab>('pos');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const [quickPinOpen, setQuickPinOpen] = useState(false);
 
   const { tenant, loadTenant, isModuleActive } = useModuleStore();
   const { getItemCount, getTotalAmount } = useCartStore();
@@ -289,18 +286,8 @@ export const PosLayout: React.FC<PosLayoutProps> = ({ onSwitchToAdminView }) => 
                 </div>
               </div>
 
-              {/* Action Buttons (Đổi ca PIN & Đăng xuất) */}
-              <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setQuickPinOpen(true)}
-                  className="py-1.5 px-2 rounded-xl bg-white/10 hover:bg-white/15 text-[11px] font-medium text-white flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  title="Chuyển ca nhanh bằng mã PIN 4 số"
-                >
-                  <KeyRound className="w-3.5 h-3.5 text-[#FF5500]" />
-                  <span>Đổi Ca</span>
-                </button>
-
+              {/* Action Button (Đăng xuất) */}
+              <div className="pt-2 border-t border-white/10">
                 <button
                   type="button"
                   onClick={() => {
@@ -308,7 +295,7 @@ export const PosLayout: React.FC<PosLayoutProps> = ({ onSwitchToAdminView }) => 
                       logout();
                     }
                   }}
-                  className="py-1.5 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-[11px] font-medium text-red-400 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                  className="w-full py-1.5 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-[11px] font-medium text-red-400 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                   title="Đăng xuất khỏi thiết bị"
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -318,14 +305,12 @@ export const PosLayout: React.FC<PosLayoutProps> = ({ onSwitchToAdminView }) => 
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setQuickPinOpen(true)}
-                title={`Đổi ca (${user?.fullName || 'Thu ngân'})`}
-                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-lg cursor-pointer transition-all"
+              <div
+                title={user?.fullName || 'Thu ngân'}
+                className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-lg select-none"
               >
                 {user?.avatar || (user?.role === 'owner' ? '👑' : '💼')}
-              </button>
+              </div>
 
               <button
                 type="button"
@@ -364,15 +349,11 @@ export const PosLayout: React.FC<PosLayoutProps> = ({ onSwitchToAdminView }) => 
             </div>
           </div>
 
-          {/* Quick Cashier Pill on Mobile (Tap to switch cashier) */}
-          <button
-            onClick={() => setQuickPinOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white text-[11px] font-mono shrink-0 cursor-pointer active:scale-95 transition-transform"
-          >
+          {/* Cashier Badge on Mobile */}
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white text-[11px] font-mono shrink-0">
             <span>{user?.avatar || (user?.role === 'owner' ? '👑' : '💼')}</span>
-            <span className="truncate max-w-[80px]">{user?.fullName?.split(' - ')[0] || 'Thu ngân'}</span>
-            <KeyRound className="w-3 h-3 text-[#FF5500]" />
-          </button>
+            <span className="truncate max-w-[100px]">{user?.fullName?.split(' - ')[0] || 'Thu ngân'}</span>
+          </div>
         </header>
 
         {/* Screen Viewport Content */}
@@ -532,23 +513,13 @@ export const PosLayout: React.FC<PosLayoutProps> = ({ onSwitchToAdminView }) => 
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 mt-1">
-                  <button
-                    onClick={() => {
-                      setMobileDrawerOpen(false);
-                      setQuickPinOpen(true);
-                    }}
-                    className="py-2 rounded-xl bg-white/10 text-xs font-semibold text-white flex items-center justify-center gap-1 cursor-pointer"
-                  >
-                    <KeyRound className="w-3.5 h-3.5 text-[#FF5500]" />
-                    <span>Đổi Ca</span>
-                  </button>
+                <div className="mt-2">
                   <button
                     onClick={() => {
                       setMobileDrawerOpen(false);
                       if (confirm('Đăng xuất?')) logout();
                     }}
-                    className="py-2 rounded-xl bg-red-500/10 text-xs font-semibold text-red-400 flex items-center justify-center gap-1 cursor-pointer"
+                    className="w-full py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-xs font-semibold text-red-400 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     <span>Đăng Xuất</span>
@@ -559,9 +530,6 @@ export const PosLayout: React.FC<PosLayoutProps> = ({ onSwitchToAdminView }) => 
           </div>
         )}
       </div>
-
-      {/* QUICK PIN SWITCH MODAL */}
-      <QuickPinModal isOpen={quickPinOpen} onClose={() => setQuickPinOpen(false)} />
     </div>
   );
 };
